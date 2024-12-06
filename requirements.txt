@@ -1,11 +1,6 @@
-streamlit
-numpy
-pandas
-matplotlib
-seaborn
-scikit-learn
-PIL
-plotly.graph_objects
-pickle
-underthesea
-regex
+streamlit==1.24.1
+pandas==1.5.3
+pickle5==0.0.11  # Nếu bạn cần pickle5, nếu không có thể bỏ
+Pillow==9.2.0
+underthesea==1.3.3
+regex==2023.10.12  # Nếu bạn đang sử dụng thư viện regex thay cho re
