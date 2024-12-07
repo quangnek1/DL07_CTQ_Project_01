@@ -412,8 +412,8 @@ st.markdown(
     """,
     unsafe_allow_html=True,)
 # Tạo bảng so sánh trước và sau xử lý beforeAfter_TextProcessing
-image_beforeAfter_TextProcessing = os.path.join(current_dir, "beforeAfter_TextProcessing.jpg")
-st.image(image_beforeAfter_TextProcessing, use_container_width=False)
+image_beforeAfter_TextProcessing = os.path.join(current_dir, "textProcessing.jpg")
+st.image(image_beforeAfter_TextProcessing, use_container_width=True)
 
 # image_beforeAfter_TextProcessing = os.path.join(current_dir, "beforeAfter_TextProcessing.jpg")
 # st.image(image_beforeAfter_TextProcessing, use_container_width=False)
