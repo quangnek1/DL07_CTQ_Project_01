@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 from underthesea import word_tokenize, pos_tag, sent_tokenize
 import regex
-import string
+import os
 
 # function cần thiết
 def get_recommendations(df, ma_san_pham, cosine_sim, nums=5):
@@ -44,8 +43,12 @@ def display_recommended_products(recommended_products, cols=5):
                     expander.markdown("Nhấn vào mũi tên để đóng hộp text này.")           
 
 # LOAD EMOJICON
+
+
 emoji_dict = {}
-with open('files/emojicon.txt', 'r', encoding="utf8") as file:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir, 'files', 'emojicon.txt')
+with open(file_path, 'r', encoding="utf8") as file:
     emoji_lst = file.read().split('\n')
     for line in emoji_lst:
         if '\t' in line:  # Kiểm tra nếu dòng chứa ký tự tab
@@ -58,7 +61,9 @@ with open('files/emojicon.txt', 'r', encoding="utf8") as file:
 #################
 # LOAD TEENCODE
 teen_dict = {}
-with open('files/teencode.txt', 'r', encoding="utf8") as file:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir, 'files', 'teencode.txt')
+with open(file_path, 'r', encoding="utf8") as file:
     teen_lst = file.read().split('\n')
     for line in teen_lst:
         if '\t' in line:  # Kiểm tra nếu dòng chứa ký tự tab
@@ -71,7 +76,9 @@ with open('files/teencode.txt', 'r', encoding="utf8") as file:
 ###############
 # LOAD TRANSLATE ENGLISH -> VNMESE
 english_dict = {}
-with open('files/english-vnmese.txt', 'r', encoding="utf8") as file:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir, 'files', 'english-vnmese.txt')
+with open(file_path, 'r', encoding="utf8") as file:
     english_lst = file.read().split('\n')
     for line in english_lst:
         if '\t' in line:  # Kiểm tra nếu dòng chứa ký tự tab
@@ -83,12 +90,16 @@ with open('files/english-vnmese.txt', 'r', encoding="utf8") as file:
 
 ################
 # LOAD wrong words
-with open('files/wrong-word.txt', 'r', encoding="utf8") as file:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir, 'files', 'wrong-word.txt')
+with open(file_path, 'r', encoding="utf8") as file:
     wrong_lst = [word.strip() for word in file.read().split('\n') if word.strip()]  # Loại bỏ dòng trống và khoảng trắng thừa
 
 #################
 # LOAD STOPWORDS
-with open('files/vietnamese-stopwords.txt', 'r', encoding="utf8") as file:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir, 'files', 'vietnamese-stopwords.txt')
+with open(file_path, 'r', encoding="utf8") as file:
     stopwords_lst = [word.strip() for word in file.read().split('\n') if word.strip()]  # Loại bỏ dòng trống và khoảng trắng thừa
 
 def process_text(text, emoji_dict, teen_dict, wrong_lst):
