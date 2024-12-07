@@ -414,6 +414,9 @@ st.markdown(
 # Tạo bảng so sánh trước và sau xử lý beforeAfter_TextProcessing
 image_beforeAfter_TextProcessing = os.path.join(current_dir, "beforeAfter_TextProcessing.jpg")
 st.image(image_beforeAfter_TextProcessing, use_container_width=False)
+
+# image_beforeAfter_TextProcessing = os.path.join(current_dir, "beforeAfter_TextProcessing.jpg")
+# st.image(image_beforeAfter_TextProcessing, use_container_width=False)
 st.markdown(
     """
     <p style:"text-align: center;"><i>Hình: Cột Noi_dung_binh_luan trước và sau khi xử lý dữ liệu.</i></p>
