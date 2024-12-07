@@ -6,27 +6,86 @@ import matplotlib.pyplot as plt
 import os
 from PIL import Image
 from utils import TongHopTienXuLy
+import streamlit.components.v1 as components
 
 
 
 # Menu
 st.set_page_config(page_title="DL07 CTQ Project 1", layout="wide")
-menu = ["Home", "Capstone Project", "Sử dụng các điều khiển", "Hiển thị chart"]
 # st.sidebar.image("path_to_your_logo.png", use_column_width=True)
 st.sidebar.markdown("<h1 style='font-size: 24px;'>DL07 CTQ Project 1</h1>", unsafe_allow_html=True)
-choice = st.sidebar.selectbox('Menu', menu)
+
+# Menu ở sidebar
+# Tạo menu với liên kết
+st.sidebar.markdown(
+    """
+    <ul style="list-style-type: none; padding: 0; margin: 0;">
+        <li style="padding: 10px; margin: 5px 0; border-radius: 5px; background-color: #333;">
+            <a href="#business-understanding" style="color: white; text-decoration: none; display: block; width: 100%;"
+               onmouseover="this.style.backgroundColor='#4CAF50';" 
+               onmouseout="this.style.backgroundColor='#333';">
+               📊 Business Understanding
+            </a>
+        </li>
+        <li style="padding: 10px; margin: 5px 0; border-radius: 5px; background-color: #333;">
+            <a href="#data-understanding" style="color: white; text-decoration: none; display: block; width: 100%;"
+               onmouseover="this.style.backgroundColor='#4CAF50';" 
+               onmouseout="this.style.backgroundColor='#333';">
+               📈 Data Understanding
+            </a>
+        </li>
+        <li style="padding: 10px; margin: 5px 0; border-radius: 5px; background-color: #333;">
+            <a href="#data-preparation" style="color: white; text-decoration: none; display: block; width: 100%;"
+               onmouseover="this.style.backgroundColor='#4CAF50';" 
+               onmouseout="this.style.backgroundColor='#333';">
+               🛠️ Data Preparation
+            </a>
+        </li>
+        <li style="padding: 10px; margin: 5px 0; border-radius: 5px; background-color: #333;">
+            <a href="#modeling-evaluation" style="color: white; text-decoration: none; display: block; width: 100%;"
+               onmouseover="this.style.backgroundColor='#4CAF50';" 
+               onmouseout="this.style.backgroundColor='#333';">
+               🤖 Modeling & Evaluation
+            </a>
+        </li>
+        <li style="padding: 10px; margin: 5px 0; border-radius: 5px; background-color: #333;">
+            <a href="#deployment-feedback" style="color: white; text-decoration: none; display: block; width: 100%;"
+               onmouseover="this.style.backgroundColor='#4CAF50';" 
+               onmouseout="this.style.backgroundColor='#333';">
+               🚀 Deployment & Feedback/Act
+            </a>
+        </li>
+        <li style="padding: 10px; margin: 5px 0; border-radius: 5px; background-color: #333;">
+            <a href="#about-us" style="color: white; text-decoration: none; display: block; width: 100%;"
+               onmouseover="this.style.backgroundColor='#4CAF50';" 
+               onmouseout="this.style.backgroundColor='#333';">
+               ℹ️ About Us
+            </a>
+        </li>
+    </ul>
+    <div style="margin-top: 50px; padding: 10px; border-top: 1px solid #ccc; color: white;">
+        <p style="margin: 0; font-size: 14px; font-weight: bold;">Thành viên tham gia dự án:</p>
+        <ul style="list-style-type: none; padding: 0; margin: 10px 0 0;">
+            <li style="margin-bottom: 5px;">Cường</li>
+            <li style="margin-bottom: 5px;">Thương</li>
+            <li>Quang</li>
+        </ul>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 # CSS cho cuộn mượt và căn chỉnh
 # st.markdown("""<style>html {scroll-behavior: smooth; /* Cuộn mượt */}section {margin-bottom: 50px;padding: 20px;border-bottom: 1px solid #ccc; /* Đường ngăn cách */}h2 {color: #FF4B4B; /* Màu đỏ cho tiêu đề */}</style>""", unsafe_allow_html=True)
 
 # Nội dung từng phần
-st.markdown("<section id='business-understanding'>", unsafe_allow_html=True)
+st.markdown("<section>", unsafe_allow_html=True)
 st.header("Sentiment Analysis")
 st.write("Phân tích cảm nghĩ, đánh giá, phản hồi bình luận.")
 st.markdown("</section>", unsafe_allow_html=True)
 
-# Ô nhập liệu
-user_input = st.text_area("Nhập đánh giá của bạn:", placeholder="Ví dụ: Sản phẩm rất tuyệt vời!")
+
 # Tải mô hình và TF-IDF Vectorizer
 with open('logistic_regression_model.pkl', 'rb') as f_model:
     loaded_model = pickle.load(f_model)
@@ -34,37 +93,69 @@ with open('logistic_regression_model.pkl', 'rb') as f_model:
 with open('tfidf_vectorizer.pkl', 'rb') as f_vectorizer:
     loaded_vectorizer = pickle.load(f_vectorizer)
 
+# Ô nhập liệu
 
+tab1, tab2 = st.tabs(["Input", "Upload"])
+with tab1:
+    user_input = st.text_area("Nhập đánh giá của bạn:", placeholder="Ví dụ: Sản phẩm rất tuyệt vời!")
+    # Xử lý khi người dùng nhấn nút "Dự đoán"
+    if st.button("Dự đoán"):
+        if user_input.strip() == "":
+            st.warning("Vui lòng nhập đánh giá.")
+        else:
+            # Tiền xử lý văn bản
+            preprocessed_review = TongHopTienXuLy(user_input)
+            # Đánh giá mới cần dự đoán
 
-# Xử lý khi người dùng nhấn nút "Dự đoán"
-if st.button("Dự đoán"):
-    if user_input.strip() == "":
-        st.warning("Vui lòng nhập đánh giá.")
-    else:
-        # Tiền xử lý văn bản
-        preprocessed_review = TongHopTienXuLy(user_input)
-        # Đánh giá mới cần dự đoán
+            # Biến đổi đánh giá mới thành TF-IDF vector
+            new_review_vectorized = loaded_vectorizer.transform([preprocessed_review])
 
-        # Biến đổi đánh giá mới thành TF-IDF vector
-        new_review_vectorized = loaded_vectorizer.transform([preprocessed_review])
+            # Dự đoán sentiment
+            predicted_sentiment = loaded_model.predict(new_review_vectorized)
+            predicted_probabilities = loaded_model.predict_proba(new_review_vectorized)
 
-        # Dự đoán sentiment
-        predicted_sentiment = loaded_model.predict(new_review_vectorized)
-        predicted_probabilities = loaded_model.predict_proba(new_review_vectorized)
+            # Hiển thị kết quả
+            st.subheader("Kết quả phân tích:")
+            print("Predicted Sentiment:", predicted_sentiment[0])
+            st.write(predicted_sentiment[0])
+with tab2:
+    # Tải file
+    # Danh sách dòng và kết quả
+    results = []
+    uploaded_files = st.file_uploader(
+        "Chọn file TXT", type=["txt"], accept_multiple_files=False
+    )
+    if uploaded_files is not None:
+        # Đọc nội dung file
+        file_content = uploaded_files.read().decode("utf-8")  # Giải mã UTF-8 cho tiếng Việt
+        st.write("Nội dung file đã tải:")
+        st.text(file_content)
+        # Tách thành danh sách dòng
+        lines = file_content.split("\n")
+        st.write("Danh sách dòng:")
+        st.write(lines)
+        for line in lines:
+            # Tiền xử lý văn bản
+            preprocessed_review = TongHopTienXuLy(line)
 
-        # Hiển thị kết quả
-         # Hiển thị kết quả
-        st.subheader("Kết quả phân tích:")
-        print("Predicted Sentiment:", predicted_sentiment[0])
-        st.write(predicted_sentiment[0])
-       
-       
-         
+            # Biến đổi đánh giá mới thành TF-IDF vector
+            new_review_vectorized = loaded_vectorizer.transform([preprocessed_review])
 
+            # Dự đoán sentiment
+            predicted_sentiment = loaded_model.predict(new_review_vectorized)
+            predicted_probabilities = loaded_model.predict_proba(new_review_vectorized)
 
-# Open and read file to cosine_sim_new
-with open('products_cosine_sim.pkl', 'rb') as f:
-    cosine_sim_new = pickle.load(f)
+            # Lưu kết quả vào danh sách
+            results.append({
+                "Dòng": line,
+                "Sentiment": predicted_sentiment[0],
+                "Probability": max(predicted_probabilities[0])  # Xác suất cao nhất
+            })
+        # Chuyển danh sách thành DataFrame
+        df_results = pd.DataFrame(results)
+        # Hiển thị bảng
+        st.subheader("Thống kê kết quả dự đoán")
+        st.table(df_results)
 
 
 
@@ -154,38 +245,50 @@ st.markdown(
                 <h3>HTTPS://HASAKI.VN</h3>
                 <p>Hasaki là thương hiệu phân phối mỹ phẩm nổi tiếng tại Việt Nam</p>
                 <p>Hỗ trợ Hasaki cải thiện sản phẩm/dịch vụ từ phản hồi của khách hàng</p>
-                <button>View More</button>
+                 <button style="padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="#business-understanding" style="color: white; text-decoration: none;">Read More</a>
+                </button>
             </div>
             <div class="card">
                 <h2>Data Understanding</h2>
                 <h3>Danh_gia.csv</h3>
                 <p>Bài toán sentiment analysis tập trung vào hai cột chính trong tệp Danh_gia.csv</p>
                 <p>Negative và Neutral chiếm tỷ lệ rất nhỏ, nhưng lại quan trọng trong việc phát hiện...</p>
-                <button>View More</button>
+                  <button style="padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="#data-understanding" style="color: white; text-decoration: none;">Read More</a>
+                </button>
             </div>
             <div class="card">
                 <h2>Data Preparation</h2>
                 <h3>Underthesea library</h3>
                 <p>Underthesea là một toolkit hỗ trợ cho việc nghiên cứu và phát triển xử lý ngôn ngữ tự nhiên tiếng Việt.</p>
-                <button>View More</button>
+                <button style="padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="#data-preparation" style="color: white; text-decoration: none;">Read More</a>
+                </button>
             </div>
             <div class="card">
                 <h2>Modeling & Evaluation (for ML)</h2>
                 <h3>Logistic Regression</h3>
                 <p>Hồi quy Logistic là một mô hình thống kê được sử dụng để phân loại nhị phân, tức dự đoán một đối tượng thuộc vào một trong hai nhóm. Hồi quy Logistic làm việc dựa trên nguyên tắc của hàm sigmoid.</p>
-                <button>View More</button>
-            </div>
-            <div class="card"">
-                <h2>Analyze & Report</h2>
-                <h3>31% (and growing) are chatbots</h3>
-                <p>Chatbots let users iteratively refine answers, creating fluid, human-like conversations with the LLM.</p>
-                <button>Are chatbots the future?</button>
+                 <button style="padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="#modeling-evaluation" style="color: white; text-decoration: none;">Read More</a>
+                </button>
             </div>
               <div class="card">
                 <h2>Deployment & Feedback/ Act</h2>
-                <h3>31% (and growing) are chatbots</h3>
-                <p>Chatbots let users iteratively refine answers, creating fluid, human-like conversations with the LLM.</p>
-                <button>Are chatbots the future?</button>
+                <h3>Github & Streamlit Cloud</h3>
+                <p>Streamlit là công cụ được xây dựng với mục đích dành cho Machine Learning Engineer, tạo ra giao diện web như Jupyter notebook.</p>
+                <button style="padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="#deployment-feedback" style="color: white; text-decoration: none;">Read More</a>
+                </button>
+            </div>
+              <div class="card">
+                <h2>About Us</h2>
+                <h3>Về chúng tôi - Nhóm 10</h3>
+                <p>Được sự hướng dẫn của cô và sự đóng góp công sức rất lớn vào dự án Sentiment Analysis.</p>
+                <button style="padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="#deployment-feedback" style="color: white; text-decoration: none;">Read More</a>
+                </button>
             </div>
         </div>
     </div>
@@ -200,13 +303,14 @@ image_path = os.path.join(current_dir, "logo.jpg")
 
 sidebarlogo = Image.open('logo.jpg').resize((100, 50))
 
-
+ 
 # Tạo tiêu đề
+
 st.markdown(
     """
-    <div class="container">
+    <div class="container" >
         <div class="header">
-            <h1>Business Understanding</h1>
+            <h1 >Business Understanding</h1>
             <hr>
         </div>
         <div class="sub-header">
@@ -216,6 +320,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 st.image(sidebarlogo, use_container_width=False)
 st.markdown(
     """
@@ -246,11 +351,11 @@ st.markdown(
     """
     <div class="container">
         <div class="header">
-            <h1>Data Understanding</h1>
+            <h1 id='data-understanding'>Data Understanding</h1>
             <hr>
         </div>
         <div class="sub-header">
-            Tổng quan về BData Understanding:
+            Tổng quan về Data Understanding:
         </div>
         <div class="content">
     """,
@@ -468,106 +573,53 @@ st.markdown(
             <hr>
         </div>
         <div class="sub-header">
-            Tổng quan về BData Understanding:
+            Mô hình Logistic Regression: Ưu việt về tốc độ xử lý.
         </div>
         <div class="content">
     """,
     unsafe_allow_html=True,
 )
+image_Smote= os.path.join(current_dir, "logistic_regression_model.jpg")
+st.image(image_Smote, use_container_width=False)
+st.markdown("""<p style:"text-align: center;"><i>Hình: Kết quả đánh giá và Confusion Matrix</i></p> """, unsafe_allow_html=True,)
+
+st.markdown("""</div></div>""", unsafe_allow_html=True,)
  
+
+# Deployment & Feedback/ Act
 st.markdown(
     """
-    <h3>Dữ liệu cung cấp:</h3>
-    <ul>
-    <li>San_pham.csv: Thông tin về sản phẩm.</li>
-    <li>Khach_hang.csv: Thông tin về khách hàng.</li>
-    <li>Danh_gia.csv: Chứa các đánh giá của khách hàng.</li>
-    </ul>
-    <h3>Dữ liệu trọng tâm:</h3>
-    <ul><li>Bài toán sentiment analysis tập trung vào hai cột chính trong tệp Danh_gia.csv.</li></ul>
-     """,
-    unsafe_allow_html=True,
-)
-
-
-
-
-
-
-
-
-
-
-
-# Tiêu đề biểu đồ
-
-st.markdown( """<div class="chart-title">App & developer growth</div><hr style="border: 1px solid #00d7ff;">""",unsafe_allow_html=True,)
-
-# Dữ liệu mẫu
-week_start = [
-    "Apr 16", "Apr 23", "Apr 30", "May 07", "May 14", "May 21", "May 28", "Jun 04", "Jun 11",
-    "Jun 18", "Jun 25", "Jul 02", "Jul 09", "Jul 16", "Jul 23", "Jul 30", "Aug 06", "Aug 13",
-    "Aug 20", "Aug 27", "Sep 03", "Sep 10", "Sep 17", "Sep 24", "Oct 01", "Oct 08", "Oct 15",
-    "Oct 22", "Oct 29", "Nov 05", "Nov 12", "Nov 19", "Nov 26", "Dec 03", "Dec 10", "Dec 17",
-    "Dec 24", "Dec 31"
-]
-
-apps_created = [
-    500, 700, 900, 1200, 1400, 1600, 1800, 2000, 2200, 2500, 2800, 3100, 3400, 3700, 4000, 4300,
-    4600, 4900, 5100, 5300, 5600, 5800, 6000, 6200, 6400, 6700, 6900, 7100, 7400, 7700, 8000,
-    8200, 8500, 8800, 9000, 9100, 9200
-]
-
-unique_developers = [
-    400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400,
-    3600, 3800, 4000, 4200, 4400, 4600, 4800, 5000, 5200, 5400, 5600, 5800, 6000, 6200, 6400,
-    6600, 6800, 7000, 7200, 7400, 7600
-]
-
-# Tạo biểu đồ với Plotly
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=week_start, y=apps_created, mode='lines+markers', name='Apps created',
-                         line=dict(color='#00d7ff', width=2)))
-fig.add_trace(go.Scatter(x=week_start, y=unique_developers, mode='lines+markers', name='Unique developers',
-                         line=dict(color='#ffaa00', width=2)))
-
-# Tùy chỉnh giao diện biểu đồ
-fig.update_layout(
-    title="",
-    xaxis_title="Week Start",
-    yaxis_title="Weekly Count",
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-    plot_bgcolor='#1a1a1a',
-    paper_bgcolor='#1a1a1a',
-    font=dict(color="white"),
-    margin=dict(l=40, r=40, t=40, b=40)
-)
-
-# Hiển thị biểu đồ
-st.plotly_chart(fig, use_container_width=True)
-
-# Nội dung nhận xét
-st.markdown(
-    """
-    <div class="content">
-        <p>
-            <span class="highlight">17,926 unique developers</span> đã tạo tổng cộng <span class="highlight">29,183 apps</span>.
-        </p>
-        <p>
-            Trung bình, mỗi nhà phát triển đã tạo <span class="highlight">1.6 apps</span>. 
-        </p>
-        <p>
-            Các ứng dụng này sử dụng sức mạnh của LLMs để xử lý nhiều tác vụ NLP, bao gồm:
-        </p>
-        <ul>
-            <li>Content generation</li>
-            <li>Language translation</li>
-            <li>Chatbots and virtual assistants</li>
-            <li>Data analysis and insights</li>
-            <li>Content summarization</li>
-        </ul>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Deployment & Feedback/ Act</h1>
+            <hr>
+        </div>
+        <div class="sub-header">
+            Sử dụng công nghệ Github và Stream lit để xây dựng GUI publish cho người dùng sử dụng.
+        </div>
+        <div class="content">
     """,
     unsafe_allow_html=True,
 )
 
+st.markdown("""</div></div>""", unsafe_allow_html=True,)
+
+# Deployment & Feedback/ Act
+st.markdown(
+    """
+    <div class="container">
+        <div class="header">
+            <h1>About Us</h1>
+            <hr>
+        </div>
+        <div class="sub-header">
+            Nhóm chúng tôi gồm 3 thành viên: Cường - Thương - Quang
+        </div>
+        <div class="content">
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown("""</div></div>""", unsafe_allow_html=True,)
+ 
+ 
