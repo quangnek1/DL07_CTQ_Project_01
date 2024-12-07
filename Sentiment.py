@@ -413,7 +413,7 @@ st.markdown(
     unsafe_allow_html=True,)
 # Tạo bảng so sánh trước và sau xử lý beforeAfter_TextProcessing
 image_beforeAfter_TextProcessing = os.path.join(current_dir, "textProcessing.jpg")
-st.image(image_beforeAfter_TextProcessing, use_container_width=True)
+st.image(image_beforeAfter_TextProcessing, use_container_width=False)
 
 # image_beforeAfter_TextProcessing = os.path.join(current_dir, "beforeAfter_TextProcessing.jpg")
 # st.image(image_beforeAfter_TextProcessing, use_container_width=False)
@@ -434,10 +434,10 @@ st.image(image_wordCloud, use_container_width=False)
 st.markdown("""<p style:"text-align: center;"><i>Hình: Hiển thị Word Cloud Positive-Neutral-Negative words.</i></p> """, unsafe_allow_html=True,)
 
 st.markdown("""<h4>Thống Kê Số Lượng Từ Theo Sentiment:</h4> """,unsafe_allow_html=True,)
-image_ThongKe= os.path.join(current_dir, "ThongKe.JPG")
+image_ThongKe= os.path.join(current_dir, "ThongKe.jpg")
 st.image(image_ThongKe, use_container_width=False)
 
-image_ThongKeChart= os.path.join(current_dir, "ThongKeChart.JPG")
+image_ThongKeChart= os.path.join(current_dir, "ThongKeChart.jpg")
 st.image(image_ThongKeChart, use_container_width=False)
 st.markdown("""<p style:"text-align: center;"><i>Hình: Tổng số lượng từ tích cực, tiêu cực, trung tính theo sentiment.</i></p> """, unsafe_allow_html=True,)
 
@@ -451,7 +451,7 @@ st.markdown("""
     </ul>   """,
     unsafe_allow_html=True,)
 
-image_Smote= os.path.join(current_dir, "Smote.JPG")
+image_Smote= os.path.join(current_dir, "Smote.jpg")
 st.image(image_Smote, use_container_width=False)
 st.markdown("""<p style:"text-align: center;"><i>Hình: Trước và sau khi áp dụng SMOTE.</i></p> """, unsafe_allow_html=True,)
 st.markdown("""</div></div>""", unsafe_allow_html=True,)
