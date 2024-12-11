@@ -115,9 +115,15 @@ st.sidebar.markdown(
     <div style="margin-top: 50px; padding: 10px; border-top: 1px solid #ccc; color: white;">
         <p style="margin: 0; font-size: 14px; font-weight: bold;">Thành viên tham gia dự án:</p>
         <ul style="list-style-type: none; padding: 0; margin: 10px 0 0;">
-            <li style="margin-bottom: 5px;">Cường</li>
-            <li style="margin-bottom: 5px;">Thương</li>
-            <li>Quang</li>
+            <li style="margin-bottom: 5px;">Đinh Công Cường</li>
+            <li style="margin-bottom: 5px;">Hoàng Ngọc Thuỷ Thương</li>
+            <li>Lê Duy Quang</li>
+        </ul>
+    </div>
+     <div style="margin-top: 50px; padding: 10px; border-top: 1px solid #ccc; color: white;">
+        <p style="margin: 0; font-size: 14px; font-weight: bold;">Giáo viên hướng dẫn:</p>
+        <ul style="list-style-type: none; padding: 0; margin: 10px 0 0;">
+            <li style="margin-bottom: 5px;">Ths. Khuất Thùy Phương</li>
         </ul>
     </div>
     """,
@@ -155,6 +161,9 @@ with tab1:
             # Tiền xử lý văn bản
             preprocessed_review = TongHopTienXuLy(user_input)
             # Đánh giá mới cần dự đoán
+            # Hiển thị kết quả đánh giá đã nhập
+            st.subheader("Đánh giá đã nhập:")
+            st.write(user_input)
 
             # Biến đổi đánh giá mới thành TF-IDF vector
             new_review_vectorized = loaded_vectorizer.transform([preprocessed_review])
@@ -165,8 +174,10 @@ with tab1:
 
             # Hiển thị kết quả
             st.subheader("Kết quả phân tích:")
-            print("Predicted Sentiment:", predicted_sentiment[0])
-            st.write(predicted_sentiment[0])
+            st.write("Predicted Sentiment:",predicted_sentiment[0])
+            st.write("Xác suất dự đoán:")
+            for idx, prob in enumerate(predicted_probabilities[0]):
+                st.write(f"- Lớp {idx}: {prob:.2%}")
 with tab2:
     # Tải file
     # Danh sách dòng và kết quả
