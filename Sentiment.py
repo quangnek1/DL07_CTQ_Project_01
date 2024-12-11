@@ -8,6 +8,55 @@ from PIL import Image
 from utils import TongHopTienXuLy
 import streamlit.components.v1 as components
 
+# Đường dẫn đến các file CSV
+current_dir = os.path.dirname(os.path.abspath(__file__))
+danh_gia_path = os.path.join(current_dir, "Danh_gia.csv")
+khach_hang_path = os.path.join(current_dir, "Khach_hang.csv")
+san_pham_path = os.path.join(current_dir, "San_pham.csv")
+
+# Đọc các file CSV vào DataFrame
+danh_gia = pd.read_csv(danh_gia_path)
+khach_hang = pd.read_csv(khach_hang_path)
+san_pham = pd.read_csv(san_pham_path)
+
+# Merge dữ liệu
+merged_data_1 = danh_gia.merge(khach_hang, on='ma_khach_hang', how='left')
+final_data = merged_data_1.merge(san_pham, on='ma_san_pham', how='left')
+
+# Đổi tên các cột
+final_data.rename(columns={
+    'ma_khach_hang': 'Ma_khach_hang',
+    'ho_ten': 'Ho_ten',
+    'ma_san_pham': 'Ma_san_pham',
+    'ten_san_pham': 'Ten_san_pham',
+    'noi_dung_binh_luan': 'Noi_dung_binh_luan',
+    'ngay_binh_luan': 'Ngay_binh_luan',
+    'so_sao': 'So_sao'
+}, inplace=True)
+
+# Hàm phân tích dữ liệu sản phẩm
+def analyze_product(product_id):
+    # Lọc dữ liệu theo sản phẩm
+    product_data = final_data[final_data['Ma_san_pham'] == product_id]
+    
+    if product_data.empty:
+        st.warning(f"Sản phẩm với mã '{product_id}' không tồn tại trong dữ liệu.")
+        return
+    
+    # Tính toán tổng quan
+    total_reviews = product_data.shape[0]
+    avg_rating = product_data['So_sao'].mean()
+    recent_review = product_data.loc[product_data['Ngay_binh_luan'].idxmax()]
+    
+    # Hiển thị kết quả phân tích
+    st.subheader(f"Phân tích sản phẩm: {product_id}")
+    st.write(f"Tên sản phẩm: {recent_review['Ten_san_pham']}")
+    st.write(f"Tổng số đánh giá: {total_reviews}")
+    st.write(f"Đánh giá trung bình: {avg_rating:.2f}")
+    st.write("Bình luận gần nhất:")
+    st.write(f"- Khách hàng: {recent_review['Ho_ten']}")
+    st.write(f"- Nội dung: {recent_review['Noi_dung_binh_luan']}")
+    st.write(f"- Ngày bình luận: {recent_review['Ngay_binh_luan']}")
 
 
 # Menu
@@ -95,7 +144,7 @@ with open('tfidf_vectorizer.pkl', 'rb') as f_vectorizer:
 
 # Ô nhập liệu
 
-tab1, tab2 = st.tabs(["Input", "Upload"])
+tab1, tab2, tab3 = st.tabs(["Input", "Upload",'Product Analysis'])
 with tab1:
     user_input = st.text_area("Nhập đánh giá của bạn:", placeholder="Ví dụ: Sản phẩm rất tuyệt vời!")
     # Xử lý khi người dùng nhấn nút "Dự đoán"
@@ -156,6 +205,20 @@ with tab2:
         # Hiển thị bảng
         st.subheader("Thống kê kết quả dự đoán")
         st.table(df_results)
+with tab3:
+    st.subheader("Phân tích sản phẩm")
+
+    # Lựa chọn sản phẩm
+    product_list = final_data['Ma_san_pham'].unique()
+    selected_product = st.selectbox("Chọn mã sản phẩm", options=product_list)
+
+    # Nút bấm để thực hiện phân tích
+    if st.button("Phân tích"):
+        analyze_product(selected_product)
+    
+
+
+   
 
 
 
@@ -376,31 +439,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 # Data Understanding
-# Đường dẫn đến các file CSV
-current_dir = os.path.dirname(os.path.abspath(__file__))
-danh_gia_path = os.path.join(current_dir, "Danh_gia.csv")
-khach_hang_path = os.path.join(current_dir, "Khach_hang.csv")
-san_pham_path = os.path.join(current_dir, "San_pham.csv")
 
-# Đọc các file CSV vào DataFrame
-danh_gia = pd.read_csv(danh_gia_path)
-khach_hang = pd.read_csv(khach_hang_path)
-san_pham = pd.read_csv(san_pham_path)
-
-# Merge dữ liệu
-merged_data_1 = danh_gia.merge(khach_hang, on='ma_khach_hang', how='left')
-final_data = merged_data_1.merge(san_pham, on='ma_san_pham', how='left')
-
-# Đổi tên các cột
-final_data.rename(columns={
-    'ma_khach_hang': 'Ma_khach_hang',
-    'ho_ten': 'Ho_ten',
-    'ma_san_pham': 'Ma_san_pham',
-    'ten_san_pham': 'Ten_san_pham',
-    'noi_dung_binh_luan': 'Noi_dung_binh_luan',
-    'ngay_binh_luan': 'Ngay_binh_luan',
-    'so_sao': 'So_sao'
-}, inplace=True)
 
 # Lựa chọn các cột cần thiết
 final_data = final_data[['Ma_khach_hang', 'Ho_ten', 'Ma_san_pham', 'Ten_san_pham',
